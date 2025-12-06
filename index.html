@@ -253,7 +253,6 @@
 <body>
     <div class="header">
         <h1>◼ ЗМЕЙКА</h1>
-        <p>Черная змейка, <span class="accent">красная еда</span>, белое поле</p>
     </div>
     
     <div class="stats">
@@ -273,7 +272,6 @@
         <div id="start-menu" class="menu">
             <div class="menu-content">
                 <h2>◼ ЗМЕЙКА</h2>
-                <p>Черная змейка собирает <span class="accent">красную еду</span> на белом поле</p>
                 <button id="start-btn" class="btn">НАЧАТЬ ИГРУ</button>
             </div>
         </div>
@@ -294,10 +292,6 @@
         <button class="control-btn down">↓</button>
     </div>
     
-    <div class="instructions">
-        Используйте кнопки или клавиши со стрелками для управления змейкой
-    </div>
-
     <script>
         // Telegram Web App инициализация
         let tg = window.Telegram?.WebApp;
@@ -339,8 +333,8 @@
         
         // Настройки игры
         const GRID_SIZE = 20;
-        const GRID_WIDTH = canvas.width / GRID_SIZE;
-        const GRID_HEIGHT = canvas.height / GRID_SIZE;
+        const GRID_WIDTH = 20; // Фиксированное количество клеток по ширине
+        const GRID_HEIGHT = 20; // Фиксированное количество клеток по высоте
         
         // Игровые переменные
         let snake = [];
@@ -356,6 +350,10 @@
         
         // Инициализация игры
         function initGame() {
+            // Устанавливаем размер canvas в зависимости от настроек сетки
+            canvas.width = GRID_WIDTH * GRID_SIZE;
+            canvas.height = GRID_HEIGHT * GRID_SIZE;
+            
             // Сбрасываем змейку - начинаем с центра
             const startX = Math.floor(GRID_WIDTH / 2);
             const startY = Math.floor(GRID_HEIGHT / 2);
@@ -498,7 +496,7 @@
                 ctx.stroke();
             }
             
-            // Горизонтальные линии
+            // Горизонтальные линии (исправлено - теперь все линии рисуются)
             for (let y = 0; y <= canvas.height; y += GRID_SIZE) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
@@ -506,95 +504,16 @@
                 ctx.stroke();
             }
             
-            // Рисуем змейку (черная)
+            // Рисуем змейку (вся черная, без глаз)
             snake.forEach((segment, index) => {
-                const isHead = index === 0;
-                
-                // Голова - чисто черная
-                if (isHead) {
-                    ctx.fillStyle = '#000000';
-                    ctx.fillRect(
-                        segment.x * GRID_SIZE + 1,
-                        segment.y * GRID_SIZE + 1,
-                        GRID_SIZE - 2,
-                        GRID_SIZE - 2
-                    );
-                    
-                    // Белые глаза на голове
-                    ctx.fillStyle = '#ffffff';
-                    const eyeSize = 3;
-                    const offset = 5;
-                    
-                    // Левый глаз (относительно направления)
-                    if (direction.x === 1) { // движется вправо
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + GRID_SIZE - offset,
-                            segment.y * GRID_SIZE + offset,
-                            eyeSize, eyeSize
-                        );
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + GRID_SIZE - offset,
-                            segment.y * GRID_SIZE + GRID_SIZE - offset - eyeSize,
-                            eyeSize, eyeSize
-                        );
-                    } else if (direction.x === -1) { // движется влево
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + offset - eyeSize,
-                            segment.y * GRID_SIZE + offset,
-                            eyeSize, eyeSize
-                        );
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + offset - eyeSize,
-                            segment.y * GRID_SIZE + GRID_SIZE - offset - eyeSize,
-                            eyeSize, eyeSize
-                        );
-                    } else if (direction.y === 1) { // движется вниз
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + offset,
-                            segment.y * GRID_SIZE + GRID_SIZE - offset,
-                            eyeSize, eyeSize
-                        );
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + GRID_SIZE - offset - eyeSize,
-                            segment.y * GRID_SIZE + GRID_SIZE - offset,
-                            eyeSize, eyeSize
-                        );
-                    } else if (direction.y === -1) { // движется вверх
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + offset,
-                            segment.y * GRID_SIZE + offset - eyeSize,
-                            eyeSize, eyeSize
-                        );
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + GRID_SIZE - offset - eyeSize,
-                            segment.y * GRID_SIZE + offset - eyeSize,
-                            eyeSize, eyeSize
-                        );
-                    } else { // стоит на месте
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + offset,
-                            segment.y * GRID_SIZE + offset,
-                            eyeSize, eyeSize
-                        );
-                        ctx.fillRect(
-                            segment.x * GRID_SIZE + GRID_SIZE - offset - eyeSize,
-                            segment.y * GRID_SIZE + offset,
-                            eyeSize, eyeSize
-                        );
-                    }
-                } 
-                // Тело - оттенки черного (темно-серые)
-                else {
-                    const darkness = 30 + (index * 5);
-                    const color = Math.min(60, darkness);
-                    ctx.fillStyle = `rgb(${color}, ${color}, ${color})`;
-                    ctx.fillRect(
-                        segment.x * GRID_SIZE + 1,
-                        segment.y * GRID_SIZE + 1,
-                        GRID_SIZE - 2,
-                        GRID_SIZE - 2
-                    );
-                }
+                // Все сегменты змейки - чисто черные
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(
+                    segment.x * GRID_SIZE + 1,
+                    segment.y * GRID_SIZE + 1,
+                    GRID_SIZE - 2,
+                    GRID_SIZE - 2
+                );
             });
             
             // Рисуем еду (красный круг)
@@ -613,6 +532,11 @@
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2;
             ctx.stroke();
+            
+            // Рисуем черную рамку вокруг поля
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
         }
         
         // Конец игры
@@ -720,16 +644,23 @@
             }
         }, { passive: false });
         
-        // Адаптируем размер canvas
+        // Адаптируем размер canvas при загрузке
         function resizeCanvas() {
             const container = document.querySelector('.game-container');
             const containerWidth = container.clientWidth;
-            const size = Math.min(containerWidth, 400);
+            const maxSize = Math.min(containerWidth, 400);
             
-            canvas.width = size;
-            canvas.height = size;
+            // Рассчитываем размер клетки, чтобы сохранить пропорции
+            const gridSize = Math.floor(maxSize / GRID_WIDTH);
             
-            // Перерисовываем игру
+            // Устанавливаем размер canvas
+            canvas.width = GRID_WIDTH * gridSize;
+            canvas.height = GRID_HEIGHT * gridSize;
+            
+            // Сохраняем новый размер клетки для отрисовки
+            window.GRID_SIZE = gridSize;
+            
+            // Перерисовываем игру, если она запущена
             if (isGameRunning) {
                 draw();
             }
